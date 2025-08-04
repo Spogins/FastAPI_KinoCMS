@@ -1,10 +1,18 @@
-from pydantic_settings import BaseSettings
+# -*- coding: utf-8 -*-
+"""
+Settings package.
+"""
 from functools import lru_cache
+
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "FastAPI_KinoCMS"
+    """
+    Settings API.
+    """
 
+    PROJECT_NAME: str = "FastAPI_KinoCMS"
     POSTGRES_DB: str
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
@@ -13,16 +21,24 @@ class Settings(BaseSettings):
 
     @property
     def DATABASE_URL(self) -> str:
+        """
+        Return async SQLAlchemy database URL for asyncpg driver.
+        """
         return (
-            f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
-            f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+            f"postgresql+asyncpg://{self.POSTGRES_USER}"  # noqa: E231
+            f":{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}"  # noqa: E231
+            f":{self.POSTGRES_PORT}/{self.POSTGRES_DB}"  # noqa: E231
         )
 
     @property
     def SYNC_DATABASE_URL(self) -> str:
+        """
+        Return sync SQLAlchemy database URL for alembic migrations.
+        """
         return (
-            f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
-            f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+            f"postgresql://{self.POSTGRES_USER}"  # noqa: E231
+            f":{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}"  # noqa: E231
+            f":{self.POSTGRES_PORT}/{self.POSTGRES_DB}"  # noqa: E231
         )
 
     class Config:
@@ -32,6 +48,9 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> Settings:
+    """
+    Get settings.
+    """
     return Settings()
 
 
